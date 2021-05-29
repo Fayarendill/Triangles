@@ -13,5 +13,27 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\triangles">
+      <UniqueIdentifier>{77b135ad-48e4-4093-925c-ad5e766d6c2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\triangles">
+      <UniqueIdentifier>{9e0aef17-d564-459d-be6c-8ef63a2aca99}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="triangles\strip.h">
+      <Filter>Header Files\triangles</Filter>
+    </ClInclude>
+    <ClInclude Include="triangles\triangle.h">
+      <Filter>Header Files\triangles</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="triangles\strip.cpp">
+      <Filter>Source Files\triangles</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

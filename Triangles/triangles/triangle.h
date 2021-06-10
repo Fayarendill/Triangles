@@ -12,9 +12,10 @@ namespace triangles
 	class Triangle
 	{
 	public:
-		Triangle(double size)
+		explicit Triangle(double size)
 			:
-			size_(size)
+			size_(size),
+			alpha_(0.0)
 		{
 		}
 
@@ -38,9 +39,9 @@ namespace triangles
 		/// @returns: position of triangle's center
 		///
 		Eigen::Vector2d& position();
-		void set_point_a(const Eigen::Vector2d&); // left most vertex
-		void set_point_b(const Eigen::Vector2d&); // middle vertex
-		void set_point_c(const Eigen::Vector2d&); // right most vertex
+		void set_point_a(const Eigen::Vector2d&, double alpha); // left most vertex
+		void set_point_b(const Eigen::Vector2d&, double alpha); // middle vertex
+		void set_point_c(const Eigen::Vector2d&, double alpha); // right most vertex
 	private:
 		const double size_;
 		double alpha_;

@@ -8,11 +8,20 @@
 
 namespace triangles
 {
+#ifndef MAX_STRIP_DEPTH
+#define MAX_STRIP_DEPTH 10
+#endif // !MAX_STRIP_DEPTH
+	constexpr double c_max_strip_depth = MAX_STRIP_DEPTH;
 
 #ifndef MIN_TRIANGLE_SIZE
 #define MIN_TRIANGLE_SIZE 0.01
-	constexpr double c_min_triangle_size = MIN_TRIANGLE_SIZE;
 #endif // !MIN_TRIANGLE_SIZE
+	constexpr double c_min_triangle_size = MIN_TRIANGLE_SIZE;
+
+#ifndef MIN_CHAIN_STEP
+#define MIN_CHAIN_STEP MIN_TRIANGLE_SIZE
+#endif // !MIN_CHAIN_STEP
+	constexpr double c_min_chain_step = MIN_CHAIN_STEP;
 
 	class Strip
 	{
@@ -24,28 +33,40 @@ namespace triangles
 		};
 		typedef std::vector<Segment> Chain;
 	public:
-		Strip(double width)
+		explicit Strip(double width) noexcept
 			:
-			width_(width),
-			fitting_chain_{ {0,0}, {1,0} }
+			width_{ width },
+			current_height_{ 0 }
 		{}
 
 		~Strip() {}
 
-		void pack(const Triangle& new_one);
+		bool pack(const Triangle& new_one);
+
+		double witdh() const;
+		double current_height() const;
+		std::vector<Triangle> packing() const;
 	private:
-		std::optional<Triangle> get_segment_fitting(
-			const Segment& segment,
+		static bool better_fitting(const Triangle& a, const Triangle& b); // true if a better than b
+	private:
+		void fix_fitting_chain_();
+
+		void update_chain_with_triangle_(const std::pair<Triangle, Chain::iterator>& triangle);
+
+		std::optional<Triangle> get_segment_fitting_(
+			const Chain::const_iterator& pSegment,
 			const Triangle& triangle
 		) const;
 
-		bool is_overlaping(
-			const Triangle& triangle
+		bool is_overlaping_(
+			const Triangle& triangle,
+			const Chain::const_iterator& excluding
 		) const;
 
-		bool intersects(const Segment& a, const Segment& b) const;
+		bool intersects_(const Segment& a, const Segment& b) const;
 	private:
-		double width_;
+		double current_height_;
+		const double width_;
 		std::vector<Triangle> packed_;
 
 		Chain fitting_chain_;

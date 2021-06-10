@@ -13,19 +13,31 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\triangles">
-      <UniqueIdentifier>{77b135ad-48e4-4093-925c-ad5e766d6c2d}</UniqueIdentifier>
+    <Filter Include="Header Files\packing">
+      <UniqueIdentifier>{0b7bc199-deeb-456e-8571-0dccbe846863}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\triangles">
+    <Filter Include="Header Files\packing\utility">
+      <UniqueIdentifier>{1e8e85d4-bdbd-4d65-ab2b-d28091f5dfc4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\packing">
+      <UniqueIdentifier>{f2b75e24-9b32-4ab2-8e05-df77497c0f3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\packing\triangles">
       <UniqueIdentifier>{9e0aef17-d564-459d-be6c-8ef63a2aca99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\packing\triangles\utility">
+      <UniqueIdentifier>{8719d223-fa52-4673-8e8f-0ae3e095873e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="triangles\utility\visualiser.h">
+      <Filter>Header Files\packing\utility</Filter>
+    </ClInclude>
     <ClInclude Include="triangles\strip.h">
-      <Filter>Header Files\triangles</Filter>
+      <Filter>Header Files\packing</Filter>
     </ClInclude>
     <ClInclude Include="triangles\triangle.h">
-      <Filter>Header Files\triangles</Filter>
+      <Filter>Header Files\packing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -33,7 +45,13 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="triangles\strip.cpp">
-      <Filter>Source Files\triangles</Filter>
+      <Filter>Source Files\packing\triangles</Filter>
+    </ClCompile>
+    <ClCompile Include="triangles\triangle.cpp">
+      <Filter>Source Files\packing\triangles</Filter>
+    </ClCompile>
+    <ClCompile Include="triangles\utility\visualiser.cpp">
+      <Filter>Source Files\packing\triangles\utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

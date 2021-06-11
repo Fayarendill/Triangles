@@ -1,6 +1,6 @@
 #include "triangle.h"
 
-namespace triangles
+namespace packing
 {
 	using Vec2d = Eigen::Vector2d;
 

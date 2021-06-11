@@ -20,23 +20,20 @@
       <UniqueIdentifier>{1e8e85d4-bdbd-4d65-ab2b-d28091f5dfc4}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\packing">
-      <UniqueIdentifier>{f2b75e24-9b32-4ab2-8e05-df77497c0f3e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\packing\triangles">
       <UniqueIdentifier>{9e0aef17-d564-459d-be6c-8ef63a2aca99}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\packing\triangles\utility">
+    <Filter Include="Source Files\packing\utility">
       <UniqueIdentifier>{8719d223-fa52-4673-8e8f-0ae3e095873e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="triangles\utility\visualiser.h">
+    <ClInclude Include="packing\utility\visualiser.h">
       <Filter>Header Files\packing\utility</Filter>
     </ClInclude>
-    <ClInclude Include="triangles\strip.h">
+    <ClInclude Include="packing\stripe.h">
       <Filter>Header Files\packing</Filter>
     </ClInclude>
-    <ClInclude Include="triangles\triangle.h">
+    <ClInclude Include="packing\triangle.h">
       <Filter>Header Files\packing</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,14 +41,14 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="triangles\strip.cpp">
-      <Filter>Source Files\packing\triangles</Filter>
+    <ClCompile Include="packing\stripe.cpp">
+      <Filter>Source Files\packing</Filter>
     </ClCompile>
-    <ClCompile Include="triangles\triangle.cpp">
-      <Filter>Source Files\packing\triangles</Filter>
+    <ClCompile Include="packing\triangle.cpp">
+      <Filter>Source Files\packing</Filter>
     </ClCompile>
-    <ClCompile Include="triangles\utility\visualiser.cpp">
-      <Filter>Source Files\packing\triangles\utility</Filter>
+    <ClCompile Include="packing\utility\visualiser.cpp">
+      <Filter>Source Files\packing\utility</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

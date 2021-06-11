@@ -145,15 +145,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="triangles\strip.h" />
-    <ClInclude Include="triangles\triangle.h" />
-    <ClInclude Include="triangles\utility\visualiser.h" />
+    <ClInclude Include="packing\stripe.h" />
+    <ClInclude Include="packing\triangle.h" />
+    <ClInclude Include="packing\utility\visualiser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="triangles\strip.cpp" />
-    <ClCompile Include="triangles\triangle.cpp" />
-    <ClCompile Include="triangles\utility\visualiser.cpp" />
+    <ClCompile Include="packing\stripe.cpp" />
+    <ClCompile Include="packing\triangle.cpp" />
+    <ClCompile Include="packing\utility\visualiser.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

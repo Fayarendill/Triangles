@@ -2,14 +2,14 @@
 #define TRIANGLES_PACKER
 
 #include <eigen3/Eigen/Dense>
-#include <triangles/triangle.h>
+#include <packing/triangle.h>
 #include <vector>
 #include <optional>
 
-namespace triangles
+namespace packing
 {
 #ifndef MAX_STRIP_DEPTH
-#define MAX_STRIP_DEPTH 10
+#define MAX_STRIP_DEPTH 100
 #endif // !MAX_STRIP_DEPTH
 	constexpr double c_max_strip_depth = MAX_STRIP_DEPTH;
 
@@ -23,7 +23,7 @@ namespace triangles
 #endif // !MIN_CHAIN_STEP
 	constexpr double c_min_chain_step = MIN_CHAIN_STEP;
 
-	class Strip
+	class Stripe
 	{
 	private:
 		struct Segment
@@ -33,13 +33,34 @@ namespace triangles
 		};
 		typedef std::vector<Segment> Chain;
 	public:
-		explicit Strip(double width) noexcept
+		explicit Stripe(double width) noexcept
 			:
 			width_{ width },
 			current_height_{ 0 }
-		{}
+		{
+			fitting_chain_.emplace_back(
+				Segment{
+					std::nullopt,
+					std::make_optional<Eigen::Vector2d>(0,0)
+				}
+			);
 
-		~Strip() {}
+			fitting_chain_.emplace_back(
+				Segment{
+					std::make_optional<Eigen::Vector2d>(0,0),
+					std::make_optional<Eigen::Vector2d>(width,0)
+				}
+			);
+
+			fitting_chain_.emplace_back(
+				Segment{
+					std::make_optional<Eigen::Vector2d>(width,0),
+					std::nullopt
+				}
+			);
+		}
+
+		~Stripe() {}
 
 		bool pack(const Triangle& new_one);
 
@@ -51,7 +72,7 @@ namespace triangles
 	private:
 		void fix_fitting_chain_();
 
-		void update_chain_with_triangle_(const std::pair<Triangle, Chain::iterator>& triangle);
+		void update_chain_with_triangle_(const Triangle& triangle, const Chain::iterator& pSegment);
 
 		std::optional<Triangle> get_segment_fitting_(
 			const Chain::const_iterator& pSegment,

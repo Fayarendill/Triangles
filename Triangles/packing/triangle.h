@@ -3,7 +3,7 @@
 
 #include <eigen3/Eigen/Dense>
 
-namespace triangles
+namespace packing
 {
 	///
 	/// Equilateral triangle class

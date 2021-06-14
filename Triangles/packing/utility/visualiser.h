@@ -12,10 +12,9 @@ namespace packing::utility
 	{
 	public:
 		explicit StripVisualiser(double stripe_to_pixel_scale)
-			:
-			stripe_to_pixel_scale_(stripe_to_pixel_scale),
-			current_width_(0),
-			current_height_(0)
+			: stripe_to_pixel_scale_(stripe_to_pixel_scale)
+			, current_width_(0)
+			, current_height_(0)
 		{
 		}
 

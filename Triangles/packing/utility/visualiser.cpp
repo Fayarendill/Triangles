@@ -17,7 +17,7 @@ namespace packing::utility
 	{
 		for(auto& segment : chain)
 		{
-			cv::line(img, to_cv_(segment.first), to_cv_(segment.second), color, 1, 8);
+			cv::line(img, to_cv_(segment.first), to_cv_(segment.second), color, 2, 8);
 		}
 	}
 
@@ -55,7 +55,7 @@ namespace packing::utility
 
 	void StripVisualiser::draw_triangle_(cv::Mat img, const Triangle& triangle)
 	{
-		cv::polylines(img, to_cv_(triangle), true, cv::Scalar(205, 0, 0), 1, 8);
+		cv::polylines(img, to_cv_(triangle), true, cv::Scalar(205, 0, 0), 2, 8);
 	}
 
 	std::vector<cv::Point> StripVisualiser::to_cv_(const Triangle& triangle) const

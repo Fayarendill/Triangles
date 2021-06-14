@@ -25,11 +25,45 @@ namespace packing
 
 	class Stripe
 	{
-	private:
-		struct Segment
+	public:
+		class Segment
 		{
-			std::optional<Eigen::Vector2d> left;
-			std::optional<Eigen::Vector2d> right;
+		public:
+			explicit Segment() noexcept
+				:
+				is_new_(true),
+				flags_(0)
+			{
+			}
+
+			explicit Segment(
+				const std::optional<Eigen::Vector2d>& left,
+				const std::optional<Eigen::Vector2d>& right,
+				bool is_new = true) noexcept
+				: left_(left)
+				, right_(right)
+				, is_new_(is_new)
+				, flags_(0)
+			{
+			}
+
+			std::optional<Eigen::Vector2d>& left();
+			std::optional<Eigen::Vector2d>& right();
+			int& flags();
+
+			const std::optional<Eigen::Vector2d>& left() const;
+			const std::optional<Eigen::Vector2d>& right() const;
+
+			bool is_new() const;
+			Segment& set_new(bool);
+
+			bool lies_on(const Eigen::Vector2d& point) const;
+			Eigen::Vector2d vector() const;
+		private:
+			std::optional<Eigen::Vector2d> left_;
+			std::optional<Eigen::Vector2d> right_;
+			bool is_new_;
+			int flags_;
 		};
 		typedef std::vector<Segment> Chain;
 	public:
@@ -41,21 +75,24 @@ namespace packing
 			fitting_chain_.emplace_back(
 				Segment{
 					std::nullopt,
-					std::make_optional<Eigen::Vector2d>(0,0)
+					std::make_optional<Eigen::Vector2d>(0,0),
+					false
 				}
 			);
 
 			fitting_chain_.emplace_back(
 				Segment{
 					std::make_optional<Eigen::Vector2d>(0,0),
-					std::make_optional<Eigen::Vector2d>(width,0)
+					std::make_optional<Eigen::Vector2d>(width,0),
+					false
 				}
 			);
 
 			fitting_chain_.emplace_back(
 				Segment{
 					std::make_optional<Eigen::Vector2d>(width,0),
-					std::nullopt
+					std::nullopt,
+					false
 				}
 			);
 		}
@@ -64,13 +101,14 @@ namespace packing
 
 		bool pack(const Triangle& new_one);
 
-		double witdh() const;
+		double width() const;
 		double current_height() const;
 		std::vector<Triangle> packing() const;
+		std::vector<std::pair<Eigen::Vector2d, Eigen::Vector2d>> fitting_chain() const;
 	private:
 		static bool better_fitting(const Triangle& a, const Triangle& b); // true if a better than b
 	private:
-		void fix_fitting_chain_();
+		void fix_fitting_chain_(Chain::iterator& last_inserted);
 
 		void update_chain_with_triangle_(const Triangle& triangle, const Chain::iterator& pSegment);
 

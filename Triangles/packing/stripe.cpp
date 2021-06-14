@@ -248,7 +248,7 @@ namespace packing
 						pSegment = last_inserted = fitting_chain_.erase(last_inserted, pSegment + 1);
 						std::cout
 							<< "Stripe::fix_fitting_chain_()"
-							<< " Fixing 1.1, chain is " << fitting_chain_
+							<< " Fixing LR 1.1, chain is " << fitting_chain_
 							<< std::endl;
 						break;
 					}
@@ -259,7 +259,7 @@ namespace packing
 						pSegment = last_inserted + 1;
 						std::cout
 							<< "Stripe::fix_fitting_chain_()"
-							<< " Fixing 1.2, chain is " << fitting_chain_
+							<< " Fixing LR 1.2, chain is " << fitting_chain_
 							<< std::endl;
 						continue;
 					}
@@ -272,7 +272,7 @@ namespace packing
 						pSegment = fitting_chain_.erase(last_inserted, pSegment + 1);
 						std::cout
 							<< "Stripe::fix_fitting_chain_()"
-							<< " Fixing 1.3, chain is " << fitting_chain_
+							<< " Fixing LR 1.3, chain is " << fitting_chain_
 							<< std::endl;
 						break;
 					}
@@ -282,7 +282,7 @@ namespace packing
 						pSegment = fitting_chain_.erase(last_inserted, pSegment);
 						std::cout
 							<< "Stripe::fix_fitting_chain_()"
-							<< " Fixing 1.4, chain is " << fitting_chain_
+							<< " Fixing LR 1.4, chain is " << fitting_chain_
 							<< std::endl;
 						break;
 					}
@@ -293,7 +293,7 @@ namespace packing
 					pSegment = fitting_chain_.erase(last_inserted, pSegment);
 					std::cout
 						<< "Stripe::fix_fitting_chain_()"
-						<< " Fixing 1.5, chain is " << fitting_chain_
+						<< " Fixing LR 1.5, chain is " << fitting_chain_
 						<< std::endl;
 					break;
 				}
@@ -313,7 +313,7 @@ namespace packing
 					pSegment = fitting_chain_.erase(last_inserted + 1, pSegment + 1);
 					std::cout
 						<< "Stripe::fix_fitting_chain_()"
-						<< " Fixing 1.7, chain is " << fitting_chain_
+						<< " Fixing LR 1.7, chain is " << fitting_chain_
 						<< std::endl;
 					continue;
 				}
@@ -323,9 +323,9 @@ namespace packing
 					pSegment = fitting_chain_.erase(last_inserted + 1, pSegment + 1);
 					std::cout
 						<< "Stripe::fix_fitting_chain_()"
-						<< " Fixing 1.8, chain is " << fitting_chain_
+						<< " Fixing LR 1.8, chain is " << fitting_chain_
 						<< std::endl;
-					break;
+					continue;
 				}
 				//else if(pSegment->lies_on(*last_inserted->right())) //1.9
 				//{
@@ -340,73 +340,196 @@ namespace packing
 					++pSegment;
 				}
 			}
+			else if(pSegment->left())
+			{
+				if(pSegment->lies_on(*last_inserted->left()) && pSegment->lies_on(*last_inserted->right()))
+				{
+					pSegment->left() = last_inserted->left();
+					(last_inserted - 1)->right() = pSegment->left();
+					pSegment = fitting_chain_.erase(last_inserted, pSegment);
+					std::cout
+						<< "Stripe::fix_fitting_chain_()"
+						<< " Fixing LR 2.1, chain is " << fitting_chain_
+						<< std::endl;
+					break;
+				}
+				else if(pSegment->lies_on(*last_inserted->left()))
+				{
+					pSegment->left() = last_inserted->left();
+					(last_inserted - 1)->right() = pSegment->left();
+					pSegment = fitting_chain_.erase(last_inserted, pSegment);
+					std::cout
+						<< "Stripe::fix_fitting_chain_()"
+						<< " Fixing LR 2.2, chain is " << fitting_chain_
+						<< std::endl;
+					break;
+				}
+				else
+				{
+					++pSegment;
+				}
+			}
 			else
 			{
 				++pSegment;
 			}
 		}
 
-		//bool new_found = false;
-		//while(!new_found || pSegment->is_new())
-		//{
-		//	if(pSegment->is_new())
-		//	{
-		//		new_found = true;
-		//	}
-		//	first_inserted = pSegment--;
-		//}
+		bool new_found = false;
+		if(pSegment == fitting_chain_.end())
+		{
+			--pSegment;
+		}
 
-		//for(; pSegment != fitting_chain_.cbegin(); --pSegment)
+		while(!new_found || pSegment->is_new())
+		{
+			if(pSegment->is_new())
+			{
+				new_found = true;
+				pSegment->set_new(false);
+			}
+			first_inserted = pSegment--;
+		}
+
+		//for(; pSegment != fitting_chain_.cbegin();)
+		//do
 		//{
 		//	if(pSegment->right() && pSegment->left())
 		//	{
-		//		if(last_inserted->lies_on(*pSegment->left()) && last_inserted->lies_on(*pSegment->right()))
+		//		if(first_inserted->lies_on(*pSegment->left()) && first_inserted->lies_on(*pSegment->right()))
 		//		{
-		//			if(pSegment->lies_on(*last_inserted->left()))
+		//			if(pSegment->lies_on(*first_inserted->left()) && pSegment->lies_on(*last_inserted->right())) // 1.1
 		//			{
-		//				pSegment = last_inserted = fitting_chain_.erase(last_inserted, pSegment);
+		//				pSegment = first_inserted = fitting_chain_.erase(pSegment, first_inserted + 1);
+		//				std::cout
+		//					<< "Stripe::fix_fitting_chain_()"
+		//					<< " Fixing RL 1.1, chain is " << fitting_chain_
+		//					<< std::endl;
 		//				break;
 		//			}
-		//			else //if(codirection(pSegment->vector(), *last_inserted->left() - *pSegment->right()))
+		//			else //if(codirection(pSegment->vector(), *last_inserted->left() - *pSegment->right())) //1.2
 		//			{
-		//				last_inserted->right() = pSegment->right();
-		//				last_inserted = fitting_chain_.erase(last_inserted + 1, pSegment);
-		//				pSegment = last_inserted + 1;
+		//				first_inserted->left() = pSegment->left();
+		//				first_inserted = fitting_chain_.erase(pSegment + 1, first_inserted);
+		//				pSegment = first_inserted - 1;
+		//				std::cout
+		//					<< "Stripe::fix_fitting_chain_()"
+		//					<< " Fixing RL 1.2, chain is " << fitting_chain_
+		//					<< std::endl;
 		//				continue;
 		//			}
 		//		}
-		//		else if(pSegment->lies_on(*last_inserted->left()) && pSegment->lies_on(*last_inserted->right()) /*&&
+		//		else if(pSegment->lies_on(*first_inserted->left()) && pSegment->lies_on(*first_inserted->right()) /*&&
 		//			codirection(last_inserted->vector(), *last_inserted->left() - *pSegment->right())*/)
 		//		{
-		//			if(last_inserted->lies_on(*pSegment->right()))
+		//			if(first_inserted->lies_on(*pSegment->left())) //1.3
 		//			{
-		//				pSegment = fitting_chain_.erase(last_inserted, pSegment);
+		//				pSegment = fitting_chain_.erase(pSegment, first_inserted + 1);
+		//				std::cout
+		//					<< "Stripe::fix_fitting_chain_()"
+		//					<< " Fixing RL 1.3, chain is " << fitting_chain_
+		//					<< std::endl;
 		//				break;
 		//			}
-		//			else
+		//			else //1.4
 		//			{
-		//				pSegment->left() = last_inserted->left();
-		//				pSegment = fitting_chain_.erase(last_inserted, pSegment - 1);
+		//				pSegment->right() = first_inserted->right();
+		//				pSegment = fitting_chain_.erase(pSegment + 1, first_inserted + 1);
+		//				std::cout
+		//					<< "Stripe::fix_fitting_chain_()"
+		//					<< " Fixing RL 1.4, chain is " << fitting_chain_
+		//					<< std::endl;
 		//				break;
 		//			}
 		//		}
-		//		else if(last_inserted->lies_on(*pSegment->left()) && pSegment->lies_on(*last_inserted->left()))
+		//		else if(first_inserted->lies_on(*pSegment->left()) && pSegment->lies_on(*first_inserted->left())) //1.5
 		//		{
-		//			pSegment->left() = last_inserted->left();
-		//			pSegment = fitting_chain_.erase(last_inserted, pSegment - 1);
+		//			pSegment->right() = first_inserted->right();
+		//			pSegment = fitting_chain_.erase(pSegment + 1, first_inserted);
+		//			std::cout
+		//				<< "Stripe::fix_fitting_chain_()"
+		//				<< " Fixing RL 1.5, chain is " << fitting_chain_
+		//				<< std::endl;
 		//			break;
 		//		}
+		//		//else if(last_inserted->lies_on(*pSegment->left())) //1.6
+		//		//{
+		//		//	last_inserted->right() = pSegment->left();
+		//		//	pSegment = fitting_chain_.erase(last_inserted + 1, pSegment);
+		//		//	std::cout
+		//		//		<< "Stripe::fix_fitting_chain_()"
+		//		//		<< " Fixing 1.6, chain is " << fitting_chain_
+		//		//		<< std::endl;
+		//		//	continue;
+		//		//}
+		//		else if(first_inserted->lies_on(*pSegment->right(), 0.005)) //1.7
+		//		{
+		//			first_inserted->right() = pSegment->right();
+		//			pSegment = fitting_chain_.erase(pSegment, first_inserted - 1);
+		//			std::cout
+		//				<< "Stripe::fix_fitting_chain_()"
+		//				<< " Fixing RL 1.7, chain is " << fitting_chain_
+		//				<< std::endl;
+		//			continue;
+		//		}
+		//		else if(pSegment->lies_on(*first_inserted->left(), 0.005)) //1.8
+		//		{
+		//			pSegment->left() = first_inserted->left();
+		//			pSegment = fitting_chain_.erase(pSegment, first_inserted - 1);
+		//			std::cout
+		//				<< "Stripe::fix_fitting_chain_()"
+		//				<< " Fixing RL 1.8, chain is " << fitting_chain_
+		//				<< std::endl;
+		//			continue;
+		//		}
+		//		//else if(pSegment->lies_on(*last_inserted->right())) //1.9
+		//		//{
+		//		//	std::cout
+		//		//		<< "Stripe::fix_fitting_chain_()"
+		//		//		<< " Fixing 1.9, chain is " << fitting_chain_
+		//		//		<< std::endl;
+		//		//	break;
+		//		//}
 		//		else
 		//		{
-		//			++pSegment;
+		//			--pSegment;
 		//		}
 		//	}
+		//	//else if(pSegment->right())
+		//	//{
+		//	//	if(pSegment->lies_on(*first_inserted->left()) && pSegment->lies_on(*first_inserted->right()))
+		//	//	{
+		//	//		pSegment->right() = first_inserted->right();
+		//	//		(first_inserted + 1)->left() = pSegment->right();
+		//	//		pSegment = fitting_chain_.erase(first_inserted, pSegment);
+		//	//		std::cout
+		//	//			<< "Stripe::fix_fitting_chain_()"
+		//	//			<< " Fixing RL 2.1, chain is " << fitting_chain_
+		//	//			<< std::endl;
+		//	//		break;
+		//	//	}
+		//	//	else if(pSegment->lies_on(*first_inserted->left()))
+		//	//	{
+		//	//		pSegment->right() = first_inserted->right();
+		//	//		(first_inserted + 1)->left() = pSegment->right();
+		//	//		pSegment = fitting_chain_.erase(first_inserted, pSegment);
+		//	//		std::cout
+		//	//			<< "Stripe::fix_fitting_chain_()"
+		//	//			<< " Fixing RL 2.2, chain is " << fitting_chain_
+		//	//			<< std::endl;
+		//	//		break;
+		//	//	}
+		//	//	else
+		//	//	{
+		//	//		--pSegment;
+		//	//	}
+		//	//}
 		//	else
 		//	{
-		//		++pSegment;
+		//		--pSegment;
 		//	}
-		//}
-	}
+		//} while(pSegment != fitting_chain_.cbegin());
+	} 
 
 	void Stripe::update_chain_with_triangle_(const Triangle& triangle, const Chain::iterator& pSegment)
 	{
@@ -422,7 +545,7 @@ namespace packing
 				it = fitting_chain_.emplace(pSegment + 1, Segment{ { triangle.point_c()  }, segment_right, false });
 			}
 			it = fitting_chain_.emplace(
-				segment_right->isApprox(triangle.point_c()) ? pSegment + 1 : it, 
+				segment_right->isApprox(triangle.point_c()) ? pSegment + 1 : it,
 				Segment{ { triangle.point_b() }, { triangle.point_c() } });
 			it = fitting_chain_.emplace(it, Segment{ { triangle.point_a() } , { triangle.point_b() } });
 

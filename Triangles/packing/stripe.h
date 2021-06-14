@@ -23,6 +23,9 @@ namespace packing
 #endif // !MIN_CHAIN_STEP
 	constexpr double c_min_chain_step = MIN_CHAIN_STEP;
 
+	constexpr double c_sqrt_3 = 1.73205080757;
+	constexpr auto c_default_prec = 1e-10;
+
 	class Stripe
 	{
 	public:
@@ -30,9 +33,7 @@ namespace packing
 		{
 		public:
 			explicit Segment() noexcept
-				:
-				is_new_(true),
-				flags_(0)
+				: is_new_(true)
 			{
 			}
 
@@ -43,13 +44,11 @@ namespace packing
 				: left_(left)
 				, right_(right)
 				, is_new_(is_new)
-				, flags_(0)
 			{
 			}
 
 			std::optional<Eigen::Vector2d>& left();
 			std::optional<Eigen::Vector2d>& right();
-			int& flags();
 
 			const std::optional<Eigen::Vector2d>& left() const;
 			const std::optional<Eigen::Vector2d>& right() const;
@@ -57,20 +56,18 @@ namespace packing
 			bool is_new() const;
 			Segment& set_new(bool);
 
-			bool lies_on(const Eigen::Vector2d& point) const;
+			bool lies_on(const Eigen::Vector2d& point, double prec = c_default_prec) const;
 			Eigen::Vector2d vector() const;
 		private:
 			std::optional<Eigen::Vector2d> left_;
 			std::optional<Eigen::Vector2d> right_;
 			bool is_new_;
-			int flags_;
 		};
 		typedef std::vector<Segment> Chain;
 	public:
 		explicit Stripe(double width) noexcept
-			:
-			width_{ width },
-			current_height_{ 0 }
+			: width_{ width }
+			, current_height_{ 0 }
 		{
 			fitting_chain_.emplace_back(
 				Segment{

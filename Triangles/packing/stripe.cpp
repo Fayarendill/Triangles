@@ -15,13 +15,10 @@ namespace packing
 	using Vec2d = Eigen::Vector2d;
 	using Line2d = Eigen::Hyperplane<double, 2>;
 
-	constexpr double c_sqrt_3 = 1.73205080757;
 
 	namespace
 	{
-		constexpr auto prec = 1e-10;
-
-		bool codirection(const Vec2d& a, const Vec2d& b)
+		bool codirection(const Vec2d& a, const Vec2d& b, double prec = c_default_prec)
 		{
 			return !(a.normalized() + b.normalized()).isZero(prec);
 		}
@@ -99,11 +96,11 @@ namespace packing
 			return o;
 		}
 
-		bool is_approx(double x, double y)
+		bool is_approx(double x, double y, double prec = c_default_prec)
 		{
 			//return Eigen::Matrix<double, 1, 1>{ x }.isApprox(Eigen::Matrix<double, 1, 1>{ y });
 			//return Eigen::Matrix<double, 1, 1>{ x }.isApproxToConstant(y, 1e-10);
-			return std::abs(x - y) < 1e-10;
+			return std::abs(x - y) < prec;
 		}
 	}
 
@@ -246,7 +243,7 @@ namespace packing
 			{
 				if(last_inserted->lies_on(*pSegment->left()) && last_inserted->lies_on(*pSegment->right()))
 				{
-					if(pSegment->lies_on(*last_inserted->left())) // 1.1
+					if(pSegment->lies_on(*last_inserted->left()) && pSegment->lies_on(*last_inserted->right())) // 1.1
 					{
 						pSegment = last_inserted = fitting_chain_.erase(last_inserted, pSegment + 1);
 						std::cout
@@ -267,7 +264,7 @@ namespace packing
 						continue;
 					}
 				}
-				else if(pSegment->lies_on(*last_inserted->left()) && pSegment->lies_on(*last_inserted->right()) /*&& 
+				else if(pSegment->lies_on(*last_inserted->left()) && pSegment->lies_on(*last_inserted->right()) /*&&
 					codirection(last_inserted->vector(), *last_inserted->left() - *pSegment->right())*/)
 				{
 					if(last_inserted->lies_on(*pSegment->right())) //1.3
@@ -310,7 +307,7 @@ namespace packing
 				//		<< std::endl;
 				//	continue;
 				//}
-				else if(last_inserted->lies_on(*pSegment->right())) //1.7
+				else if(last_inserted->lies_on(*pSegment->right(), 0.005)) //1.7
 				{
 					last_inserted->right() = pSegment->right();
 					pSegment = fitting_chain_.erase(last_inserted + 1, pSegment + 1);
@@ -320,7 +317,7 @@ namespace packing
 						<< std::endl;
 					continue;
 				}
-				else if(pSegment->lies_on(*last_inserted->left())) //1.8
+				else if(pSegment->lies_on(*last_inserted->left(), 0.005)) //1.8
 				{
 					pSegment->left() = last_inserted->left();
 					pSegment = fitting_chain_.erase(last_inserted + 1, pSegment + 1);
@@ -424,7 +421,9 @@ namespace packing
 			{
 				it = fitting_chain_.emplace(pSegment + 1, Segment{ { triangle.point_c()  }, segment_right, false });
 			}
-			it = fitting_chain_.emplace(it, Segment{ { triangle.point_b() }, { triangle.point_c() } });
+			it = fitting_chain_.emplace(
+				segment_right->isApprox(triangle.point_c()) ? pSegment + 1 : it, 
+				Segment{ { triangle.point_b() }, { triangle.point_c() } });
 			it = fitting_chain_.emplace(it, Segment{ { triangle.point_a() } , { triangle.point_b() } });
 
 			it += 1l;
@@ -623,7 +622,7 @@ namespace packing
 		return *this;
 	}
 
-	bool Stripe::Segment::lies_on(const Eigen::Vector2d& point) const
+	bool Stripe::Segment::lies_on(const Eigen::Vector2d& point, double prec) const
 	{
 		Line2d line;
 		if(right_ && left_)
@@ -635,17 +634,15 @@ namespace packing
 			line = Line2d(Vec2d::UnitX(), left_ ? *left_ : *right_);
 		}
 
-		if(is_approx(line.signedDistance(point), 0) &&
-			(
-				(left_ && right_ && !codirection(point - *left_, point - *right_)) ||
-				(!left_ && right_ && codirection(point - *right_, Vec2d::UnitX())) ||
-				(left_ && !right_ && codirection(point - *left_, Vec2d::UnitX()))
-			)
-		)
+		bool on_segment_cond_0 = left_ && right_ && is_approx((point - *left_).norm() + (point - *right_).norm(), vector().norm(), prec);
+		bool on_segment_cond_1 = !left_ && right_ && codirection(point - *right_, Vec2d::UnitY(), prec);
+		bool on_segment_cond_2 = left_ && !right_ && codirection(point - *left_, Vec2d::UnitY(), prec);
+
+		if(is_approx(line.signedDistance(point), 0, prec) && (on_segment_cond_0 || on_segment_cond_1 || on_segment_cond_2))
 		{
 			return true;
 		}
-		else if((right_ && point.isApprox(*right_)) || (left_ && point.isApprox(*left_)))
+		else if((right_ && point.isApprox(*right_, prec)) || (left_ && point.isApprox(*left_, prec)))
 		{
 			return true;
 		}

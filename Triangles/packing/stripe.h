@@ -67,7 +67,6 @@ namespace packing
 	public:
 		explicit Stripe(double width) noexcept
 			: width_{ width }
-			, current_height_{ 0 }
 		{
 			fitting_chain_.emplace_back(
 				Segment{
@@ -102,6 +101,7 @@ namespace packing
 		double current_height() const;
 		std::vector<Triangle> packing() const;
 		std::vector<std::pair<Eigen::Vector2d, Eigen::Vector2d>> fitting_chain() const;
+		double current_competetive_ratio() const;
 	private:
 		static bool better_fitting(const Triangle& a, const Triangle& b); // true if a better than b
 	private:
@@ -121,7 +121,6 @@ namespace packing
 
 		bool intersects_(const Segment& a, const Segment& b) const;
 	private:
-		double current_height_;
 		const double width_;
 		std::vector<Triangle> packed_;
 

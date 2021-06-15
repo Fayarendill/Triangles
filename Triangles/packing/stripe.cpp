@@ -205,6 +205,16 @@ namespace packing
 		return chain;
 	}
 
+	double Stripe::current_competetive_ratio() const
+	{
+		auto packing_s = 0.0;
+		for(auto& triangle : packed_)
+		{
+			packing_s += triangle.size() * triangle.size() * c_sqrt_3 / 4;
+		}
+		return current_height() * width_ / packing_s;
+	}
+
 	bool Stripe::better_fitting(const Triangle& a, const Triangle& b)
 	{
 		return a.position().y() < b.position().y();
@@ -701,7 +711,7 @@ namespace packing
 
 		auto intersection = line_a.intersection(line_b);
 		//if(!codirection(*a.left() - intersection, *a.right() - intersection) && !codirection(*b.left() - intersection, *b.right() - intersection))
-		if(!a.left()->isApprox(intersection, c_default_prec) && !a.right()->isApprox(intersection, c_default_prec) && 
+		if(!a.left()->isApprox(intersection, c_default_prec) && !a.right()->isApprox(intersection, c_default_prec) &&
 			a.lies_on(intersection) && b.lies_on(intersection))
 		{
 			return true;

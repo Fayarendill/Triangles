@@ -13,9 +13,8 @@ namespace packing
 	{
 	public:
 		explicit Triangle(double size)
-			:
-			size_(size),
-			alpha_(0.0)
+			: size_(size)
+			, alpha_(0.0)
 		{
 		}
 

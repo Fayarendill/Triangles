@@ -14,7 +14,7 @@ namespace packing
 	constexpr double c_max_strip_depth = MAX_STRIP_DEPTH;
 
 #ifndef MIN_TRIANGLE_SIZE
-#define MIN_TRIANGLE_SIZE 0.01
+#define MIN_TRIANGLE_SIZE 0.1
 #endif // !MIN_TRIANGLE_SIZE
 	constexpr double c_min_triangle_size = MIN_TRIANGLE_SIZE;
 
@@ -65,8 +65,9 @@ namespace packing
 		};
 		typedef std::vector<Segment> Chain;
 	public:
-		explicit Stripe(double width) noexcept
+		explicit Stripe(double width, bool debug = false) noexcept
 			: width_{ width }
+			, debug_(debug)
 		{
 			fitting_chain_.emplace_back(
 				Segment{
@@ -121,6 +122,7 @@ namespace packing
 
 		bool intersects_(const Segment& a, const Segment& b) const;
 	private:
+		bool debug_;
 		const double width_;
 		std::vector<Triangle> packed_;
 

@@ -7,6 +7,7 @@
 #include <opencv2/highgui.hpp>
 #include <packing/triangle.h>
 #include <Eigen/Dense>
+#include <filesystem>
 
 namespace packing::utility
 {
@@ -29,6 +30,14 @@ namespace packing::utility
 		const std::optional<std::vector<std::pair<Eigen::Vector2d, Eigen::Vector2d>>>& fitting_chain
 	)
 	{
+		auto path = std::filesystem::path(filepath);
+		std::filesystem::path dir_path = path.parent_path();
+
+		if(!std::filesystem::exists(dir_path) && !dir_path.empty())
+		{
+			std::filesystem::create_directories(dir_path);
+		}
+
 		current_width_ = static_cast<int>(stripe_to_pixel_scale_) * width;
 		current_height_= static_cast<int>(stripe_to_pixel_scale_) * height;
 		cv::Mat img =
@@ -44,11 +53,13 @@ namespace packing::utility
 			cv::Mat img = 
 				cv::Mat::ones(current_height_, current_width_, CV_8UC3);
 			display_fitting_chain_(std::move(img), fitting_chain.value());
-			cv::imshow("chain", img);
+			cv::imshow(filepath + "_chain", img);
+			cv::imwrite(filepath + "_chain.png", img);
 			cv::waitKey(0);
 		}
 
-		cv::imshow("stripe", img);
+		cv::imshow(filepath + "_stripe", img);
+		cv::imwrite(filepath + "_stripe.png", img);
 		cv::waitKey(0);
 		cv::destroyAllWindows();
 	}

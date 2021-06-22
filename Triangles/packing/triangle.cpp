@@ -24,7 +24,7 @@ namespace packing
 
 	Vec2d Triangle::point_a() const
 	{
-		Vec2d shift = size_ * Vec2d{ -0.5, -sqrt_3/6 };
+		Vec2d shift = size_ * Vec2d{ -0.5, -sqrt_3 / 6 };
 		shift = Eigen::Rotation2D(alpha_ * deg_2_rad) * shift;
 		return position_ + shift;
 	}
@@ -64,7 +64,7 @@ namespace packing
 	void Triangle::set_point_b(const Vec2d& position, double alpha)
 	{
 		alpha_ = alpha;
-		Vec2d shift = size_ * Vec2d{ 0, - sqrt_3 / 3 };
+		Vec2d shift = size_ * Vec2d{ 0, -sqrt_3 / 3 };
 		shift = Eigen::Rotation2D(alpha * deg_2_rad) * shift;
 		position_ = position + shift;
 	}
